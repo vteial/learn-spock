@@ -1,0 +1,21 @@
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories { mavenCentral() }
+
+dependencies {
+	compile("org.codehaus.groovy:groovy-all:2.3.7")
+	testCompile("org.spockframework:spock-core:0.7-groovy-2.0")
+}
+
+task collectJars(type: Copy) {
+	into "$buildDir/lib"
+	from configurations.testRuntime
+}
+
+task wrapper(type: Wrapper) { 
+	gradleVersion = '1.12'
+}
