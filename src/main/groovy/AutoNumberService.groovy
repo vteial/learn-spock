@@ -1,5 +1,5 @@
 
 interface AutoNumberService {
 
-	long nextNumber(String key);
+	long nextNumber(String id);
 }

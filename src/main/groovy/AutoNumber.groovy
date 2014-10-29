@@ -3,5 +3,5 @@ public class AutoNumber {
 
 	String id;
 
-	long value;
+	long val;
 }
