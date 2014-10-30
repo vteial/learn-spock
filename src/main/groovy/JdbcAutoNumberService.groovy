@@ -4,31 +4,40 @@ public class JdbcAutoNumberService implements AutoNumberService {
 
 	Sql sql = null;
 
-	JdbcAutoNumberService() {
-		sql = Sql.newInstance("jdbc:h2:mem:", "org.h2.Driver");
-		String query = '''
-		CREATE TABLE auto_number (
-			id          VARCHAR2(50) NOT NULL,
-			val         INTEGER NOT NULL,
-			CONSTRAINT AutoNumber_pk0 PRIMARY KEY (id)
-		);
-		'''
-		sql.execute(query);
+	JdbcAutoNumberService(Sql sql) {
+		this.sql = sql
 	}
 
 	@Override
 	public long nextNumber(String id) {
+		long val = 0
+
+		def query = 'select * from auto_number where id = ?'
+		def an = sql.firstRow(query, [id])
+		if(an) {
+			val = an.val + 1
+			query = 'update auto_number set val = ? where id = ?'
+			sql.executeUpdate(query, [val, id]);
+		}
+		else {
+			val = 1
+			query = 'insert into auto_number (id, val) values (?, ?)'
+			sql.executeInsert(query, [id, val]);
+		}
+
+		return val
+	}
+
+	public long nextNumberX(String id) {
 		def val = 0
 
 		String query = "select * from auto_number where id = '"
 		query = query + id + "'"
 		def an = sql.firstRow(query)
-		//println(an)
 		if(an == null) {
 			val += 1
 			query = "insert into auto_number (id, val) values ('"
 			query += id + "', " + val + ")"
-			//println query
 			sql.executeInsert(query);
 		}
 		else {
@@ -36,7 +45,6 @@ public class JdbcAutoNumberService implements AutoNumberService {
 			query = "update auto_number set val = "
 			query = query + val + " where id = '"
 			query = query + id + "'"
-			//println query
 			sql.executeUpdate(query);
 		}
 
