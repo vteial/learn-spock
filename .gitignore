@@ -1,3 +1,9 @@
-/build/
-/.gradle/
-/bin/
+build/
+bin/
+logs/*
+.gradle/
+.idea/
+!.gitkeep
+tmp
+.log
+.DS_Store
